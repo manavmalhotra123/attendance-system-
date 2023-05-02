@@ -35,7 +35,7 @@ while True:
         roi = frame[y:y+h, x:x+w]
 
     # Draw a bounding box around the detected face
-    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
 
     # Resize the raw image into (224-height,224-width) pixels
