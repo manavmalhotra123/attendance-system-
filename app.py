@@ -34,31 +34,30 @@ while True:
         # Extract the region of interest (ROI) from the original image
         roi = frame[y:y+h, x:x+w]
 
-    # Draw a bounding box around the detected face
+        # Resize the raw image into (224-height,224-width) pixels
+        roi = cv2.resize(roi, (224, 224), interpolation=cv2.INTER_AREA)
+
+        # Make the image a numpy array and reshape it to the models input shape.
+        roi = np.asarray(roi, dtype=np.float32).reshape(1, 224, 224, 3)
+
+        # Normalize the image array
+        roi = (roi / 127.5) - 1
+
+        # Predicts the model
+        prediction = model.predict(roi)
+        index = np.argmax(prediction)
+        class_name = class_names[index]
+        confidence_score = prediction[0][index]
+
+        # Draw a bounding box around the detected face
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
+        # Print prediction and confidence score
+        print("Class:", class_name[2:], end="")
+        print("Confidence Score:", str(np.round(confidence_score * 100))[:-2], "%")
 
-    # Resize the raw image into (224-height,224-width) pixels
-    image = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
-
-    # # Show the image in a window
+    # Show the image in a window
     cv2.imshow("Webcam Image",frame)
-
-    # # Make the image a numpy array and reshape it to the models input shape.
-    image = np.asarray(image, dtype=np.float32).reshape(1, 224, 224, 3)
-
-    # # Normalize the image array
-    image = (image / 127.5) - 1
-
-    # # Predicts the model
-    prediction = model.predict(image)
-    index = np.argmax(prediction)
-    class_name = class_names[index]
-    confidence_score = prediction[0][index]
-
-    # # Print prediction and confidence score
-    print("Class:", class_name[2:], end="")
-    # print("Confidence Score:", str(np.round(confidence_score * 100))[:-2], "%")
 
     # Listen to the keyboard for presses.
     keyboard_input = cv2.waitKey(1)
